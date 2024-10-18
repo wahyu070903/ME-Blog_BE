@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\PostController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/getlatest', [PostController::class, 'getLatest']);
+Route::get('/getrecent', [PostController::class, 'getRecent']);
+Route::get('/getbytag/{tag}', [PostController::class, 'getByTag']);
+Route::get('/gethome', [PostController::class, 'getHome']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+
 });
