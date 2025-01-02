@@ -15,12 +15,16 @@ use App\Http\Controllers\PostController;
 |
 */
 
-Route::get('/getlatest', [PostController::class, 'getLatest']);
-Route::get('/getrecent', [PostController::class, 'getRecent']);
-Route::get('/getbytag/{tag}', [PostController::class, 'getByTag']);
-Route::get('/gethome', [PostController::class, 'getHome']);
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 
 });
+
+Route::get('/getlatest', [PostController::class, 'getLatest']);
+Route::get('/getrecent', [PostController::class, 'getRecent']);
+Route::get('/getbytag/{tag}', [PostController::class, 'getByTag']);
+Route::get('/gethome', [PostController::class, 'getHome']);
+Route::get('/paginate/{start}', [PostController::class, 'paginate']);
+Route::get('/count',[PostController::class, 'count']);
+Route::get('/getbyid/{id}',[PostController::class, 'getById']);
+Route::get('/deletebyid/{id}',[PostController::class,'deleteById']);

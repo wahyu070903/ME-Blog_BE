@@ -20,15 +20,18 @@ class PostFactory extends Factory
     public function definition(): array
     {
         $tags_option = ['TECHNOLOGY', 'ELECTRONICS','MECHANICAL','COMPUTER ENG'];
+        $type_option = ['normal', 'embed'];
         $thumbnail_option = "drone.jpg";
 
         return [
-            'title' => $this->faker->text(50),
-            'description' => $this->faker->text(100),
+            'type' => $this->faker->randomElement($type_option),
+            'title' => $this->faker->sentence(10),
+            'description' => $this->faker->paragraph(5),
             'tag' => $this->faker->randomElement($tags_option),
             'rtime' => $this->faker->numberBetween(0,15),
-            'content' => $this->faker->text(2000),
-            'thumbnail' => $thumbnail_option
+            'content' => $this->faker->paragraph($nb = 100, $asText = true),
+            'thumbnail' => $thumbnail_option,
+            'post_at' => $this->faker->date('Y-m-d', 'now')
         ];
     }
 }

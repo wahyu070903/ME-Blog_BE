@@ -15,14 +15,34 @@ class PostController extends Controller
         ]);
     }
     public function getHome(){
-        $size = 14;
-        $range = Post::latest()->skip(1)->take($size);
-        $data = $range->get();
+        /* 
+        Get all data required by homepage
+        If this function used all remain function is not used
+        */
+        
+        $feedLength = 14;
+        $featuredLength = 6;
 
-        if(!$data){
+        $feed = Post::latest()->skip(1)->take($feedLength)->get();
+        $latest = Post::latest()->first();
+        $featured = Post::orderBy('created_at', 'desc')->limit($featuredLength)->get();
+        $tag_technology = Post::latest()->where('tag', 'TECHNOLOGY')->take(3)->get();
+        $tag_electronic = Post::latest()->where('tag','ELECTRONICS')->take(3)->get();
+        $counter = Post::count();
+
+        if(!$feed && !$latest && !$featured){
             return $this->sendResponse(400, "Data retrival failed", null);
         }
-        return $this->sendResponse(200, "Data retrival success", $data);
+        $wrapper = [
+            'latest' => $latest,
+            'featured' => $featured,
+            'feed' => $feed,
+            'postcount' => $counter,
+            'tag_technology' => $tag_technology,
+            'tag_electronic' => $tag_electronic
+        ];
+
+        return $this->sendResponse(200, "Data retrival success", $wrapper);
     }
     public function getLatest(){
         $size = 6;
@@ -58,5 +78,23 @@ class PostController extends Controller
         
         return $this->sendResponse(200, "Data retrival success", $data);
     }
-
+    public function paginate($start){
+        $post = Post::orderBy('id', 'asc')
+                ->skip($start - 1)
+                ->take(10)->get();
+        
+        return $this->sendResponse(200, "Data retrival success", $post);
+    }
+    public function count(){
+        $counter = Post::count();
+        return $this->sendResponse(200,"Data retrival success", $counter);
+    }
+    public function getById($id){
+        $data = Post::where('id', $id)->get();
+        return $this->sendResponse(200,"Data retrival success", $data);
+    }
+    public function deleteById($id){
+        $query = Post::where('id', $id)->delete();
+        return $this->sendResponse(200, "Data deletion success",'');
+    }
 }
