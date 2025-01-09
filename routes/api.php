@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ImageController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,3 +29,7 @@ Route::get('/paginate/{start}', [PostController::class, 'paginate']);
 Route::get('/count',[PostController::class, 'count']);
 Route::get('/getbyid/{id}',[PostController::class, 'getById']);
 Route::get('/deletebyid/{id}',[PostController::class,'deleteById']);
+Route::post('/create-post',[PostController::class,'createPost']);
+
+Route::post('/upload', [ImageController::class, 'imageUpload']);
+Route::delete('/image-delete', [ImageController::class, 'imageDelete']);

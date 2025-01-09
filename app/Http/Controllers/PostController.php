@@ -94,7 +94,34 @@ class PostController extends Controller
         return $this->sendResponse(200,"Data retrival success", $data);
     }
     public function deleteById($id){
-        $query = Post::where('id', $id)->delete();
-        return $this->sendResponse(200, "Data deletion success",'');
+        $operation = Post::where('id', $id)->delete();
+        if ($operation) {
+            return $this->sendResponse(200, 'Record deleted', '');
+        }
+        return $this->sendResponse(400, 'Record not found or delete failed', '');
+    }
+
+    public function createPost(Request $request){
+        $post_title = $request->input('title');
+        $post_rtime = $request->input('rtime');
+        $post_tag = $request->input('tag');
+        $post_description = $request->input('description');
+        $post_thumbnail = $request->file('thumbnail');
+        $content = $request->input('content');
+
+        $thumbnail_name = $post_thumbnail->getClientOriginalName();
+        
+        $record = Post::create([
+            'title' => $post_title,
+            'description' => $post_description,
+            'tag' => $post_tag,
+            'rtime' => $post_rtime,
+            'content' => $content,
+            'thumbnail' => $thumbnail_name,
+        ]);
+
+        return response()->json([
+            'message' => $post_title
+        ]);
     }
 }
