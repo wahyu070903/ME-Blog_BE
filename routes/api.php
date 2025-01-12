@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\ImageController;
+use App\Http\Controllers\EditorController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,5 +31,5 @@ Route::get('/getbyid/{id}',[PostController::class, 'getById']);
 Route::get('/deletebyid/{id}',[PostController::class,'deleteById']);
 Route::post('/create-post',[PostController::class,'createPost']);
 
-Route::post('/upload', [ImageController::class, 'imageUpload']);
-Route::delete('/image-delete', [ImageController::class, 'imageDelete']);
+Route::post('/upload', [EditorController::class, 'imageUpload']);
+Route::delete('/image-delete', [EditorController::class, 'imageDelete']);

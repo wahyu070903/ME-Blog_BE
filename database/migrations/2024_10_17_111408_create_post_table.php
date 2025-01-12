@@ -20,7 +20,6 @@ return new class extends Migration
             $table->smallInteger('rtime');
             $table->text('content');
             $table->string('thumbnail', 50);
-            $table->date('post_at');
             $table->timestamps();
         });
     }

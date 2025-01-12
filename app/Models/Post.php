@@ -11,12 +11,13 @@ class Post extends Model
     protected $table = 'post';
     protected $primaryKey = 'id';
     protected $fillable = [
+        'type',
         'title',
         'description',
-        'tags',
+        'tag',
         'rtime',
         'content',
-        'thumbnail',
+        'thumbnail',        
     ];
     
 }

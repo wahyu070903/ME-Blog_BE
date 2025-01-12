@@ -17,7 +17,7 @@ class ImageService
             ], 422);
         }
 
-        $image->storeAs('images', $original_name, 'public');
+        $image->storeAs($location, $original_name, 'public');
         $url = url('storage/' . $path);
 
         return response()->json([
@@ -26,7 +26,7 @@ class ImageService
 
     }
     public function imageDelete($path){
-        $imagePath = $rpath;
+        $imagePath = $path;
 
         if (!$imagePath) {
             return response()->json(['message' => 'Image path is required'], 400);

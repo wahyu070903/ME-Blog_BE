@@ -31,7 +31,6 @@ class PostFactory extends Factory
             'rtime' => $this->faker->numberBetween(0,15),
             'content' => $this->faker->paragraph($nb = 100, $asText = true),
             'thumbnail' => $thumbnail_option,
-            'post_at' => $this->faker->date('Y-m-d', 'now')
         ];
     }
 }

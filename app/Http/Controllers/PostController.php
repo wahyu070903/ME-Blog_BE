@@ -5,8 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 
+use App\Services\ImageService;
+
 class PostController extends Controller
 {
+    protected $imageService;
+
+    public function __construct(ImageService $imageService){
+        $this->imageService = $imageService;
+    }
+
     public function sendResponse($code, $message, $data){
         return response()->json([
             'status'    => $code,
@@ -14,6 +22,7 @@ class PostController extends Controller
             'data'      => $data
         ]);
     }
+
     public function getHome(){
         /* 
         Get all data required by homepage
@@ -44,6 +53,7 @@ class PostController extends Controller
 
         return $this->sendResponse(200, "Data retrival success", $wrapper);
     }
+
     public function getLatest(){
         $size = 6;
         $latest = Post::orderBy('created_at', 'desc')->limit($size)->get();
@@ -52,6 +62,7 @@ class PostController extends Controller
         }
         return $this->sendResponse(200, "Data retrival success", $latest);
     }
+
     public function getRecent(){
         $recent = Post::latest()->first();
 
@@ -60,6 +71,7 @@ class PostController extends Controller
         }
         return $this->sendResponse(200, "Data retrival success", $recent);
     }
+
     public function getByTag($tag){
         $size = 3;
         $tag_code = [
@@ -78,6 +90,7 @@ class PostController extends Controller
         
         return $this->sendResponse(200, "Data retrival success", $data);
     }
+
     public function paginate($start){
         $post = Post::orderBy('id', 'asc')
                 ->skip($start - 1)
@@ -85,14 +98,17 @@ class PostController extends Controller
         
         return $this->sendResponse(200, "Data retrival success", $post);
     }
+
     public function count(){
         $counter = Post::count();
         return $this->sendResponse(200,"Data retrival success", $counter);
     }
+
     public function getById($id){
         $data = Post::where('id', $id)->get();
         return $this->sendResponse(200,"Data retrival success", $data);
     }
+
     public function deleteById($id){
         $operation = Post::where('id', $id)->delete();
         if ($operation) {
@@ -110,8 +126,13 @@ class PostController extends Controller
         $content = $request->input('content');
 
         $thumbnail_name = $post_thumbnail->getClientOriginalName();
-        
+        $image_store_status = '';
+        if($request->hasFile('thumbnail')){
+            $image_store_status = $this->imageService->imageUpload($post_thumbnail, 'thumbnail/');
+        }
+
         $record = Post::create([
+            'type' => 'normal',
             'title' => $post_title,
             'description' => $post_description,
             'tag' => $post_tag,
@@ -121,7 +142,7 @@ class PostController extends Controller
         ]);
 
         return response()->json([
-            'message' => $post_title
+            'message' => $image_store_status
         ]);
     }
 }
