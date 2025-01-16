@@ -117,6 +117,45 @@ class PostController extends Controller
         return $this->sendResponse(400, 'Record not found or delete failed', '');
     }
 
+    public function getNextandPrev($current){
+        $next = Post::where('id', '>', $current)
+                ->orderBy('id', 'asc')
+                ->first();
+
+        $prev = Post::where('id', '<', $current)
+                ->orderBy('id', 'desc')
+                ->first();
+
+        $data = [
+            "next" => $next,
+            "prev" => $prev
+        ];
+
+        return $this->sendResponse(200, 'Record retrive success', $data);
+    }
+
+    public function editPost($id){
+        $post = Post::find($id);
+
+        if (!$post) {
+            return response()->json([
+                'message' => 'Post not found'
+            ], 404);
+        }
+
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'tag' => 'required',
+            'thumbnail' => 'required',
+            'rtime' => 'required'
+        ]);
+
+        $post->update($validatedData);
+
+        return $this->sendResponse(200,"Data update Success", '');
+    }
+
     public function createPost(Request $request){
         $post_title = $request->input('title');
         $post_rtime = $request->input('rtime');
