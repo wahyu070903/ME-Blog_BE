@@ -31,7 +31,7 @@ Route::get('/getbyid/{id}',[PostController::class, 'getById']);
 Route::get('/deletebyid/{id}',[PostController::class,'deleteById']);
 Route::post('/create-post',[PostController::class,'createPost']);
 Route::get('/getnextprev/{current}',[PostController::class,'getNextandPrev']);
-Route::put('/edit/{id}',[PostController::class, 'editPost']);
+Route::post('/editpost/{id}',[PostController::class,'editPost']);
 
 Route::post('/upload', [EditorController::class, 'imageUpload']);
 Route::delete('/image-delete', [EditorController::class, 'imageDelete']);

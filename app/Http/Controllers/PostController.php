@@ -134,29 +134,78 @@ class PostController extends Controller
         return $this->sendResponse(200, 'Record retrive success', $data);
     }
 
-    public function editPost($id){
+    public function editPost(Request $request, $id){
         $post = Post::find($id);
-
-        if (!$post) {
+        
+        if(!$post) {
             return response()->json([
                 'message' => 'Post not found'
             ], 404);
         }
 
-        $validatedData = $request->validate([
-            'title' => 'required',
+        $validator = $request->validate([
+            'title' => 'required|max:500',
+            'description' => 'required|max:1000',
+            'tag' => 'required|max:50',
+            'rtime' => 'required|max:6',
             'content' => 'required',
-            'tag' => 'required',
-            'thumbnail' => 'required',
-            'rtime' => 'required'
+            'thumbnail' => 'nullable|file|image|mimes:jpg,jpeg,png,gif|max:5120',  // 5Mb
         ]);
 
-        $post->update($validatedData);
+        $post_title = $request->input('title');
+        $post_rtime = $request->input('rtime');
+        $post_tag = $request->input('tag');
+        $post_description = $request->input('description');
+        $post_thumbnail = $request->file('thumbnail');
+        $content = $request->input('content');
 
-        return $this->sendResponse(200,"Data update Success", '');
+        $thumbnail_name = "";
+
+        if($request->hasFile("thumbnail")){
+            $thumbnail_name = $post_thumbnail->getClientOriginalName();
+            $old_thumbnail_name = Post::where("id", $id)->value("thumbnail");
+            
+            $delete_status = $this->imageService->imageDelete("thumbnail/" . $old_thumbnail_name);
+            if(!$delete_status["success"]){
+                return response()->json([
+                    "message" => $delete_status["message"],
+                ], 422);
+            }
+
+            $upload_status = $this->imageService->imageUpload($post_thumbnail, "thumbnail/");
+            if(!$upload_status["success"]){
+                return response()->json([
+                    "message" => $upload_status["message"],
+                ], 422);
+            }
+        }else{
+            $thumbnail_name = $post->value("thumbnail");
+        }
+        
+        $post->update([
+            "title" => $post_title,
+            "description" => $post_description,
+            "tag" => $post_tag,
+            "rtime" => $post_rtime,
+            "content" => $content,
+            "thumbnail" => $thumbnail_name,
+        ]);
+
+        return response()->json([
+            "message" => "Post updated successfully"
+        ],200);
     }
 
     public function createPost(Request $request){
+        $validator = $request->validate([
+            'title' => 'required|max:500',
+            'description' => 'required|max:1000',
+            'tag' => 'required|max:50',
+            'rtime' => 'required|max:6',
+            'content' => 'required',
+            'thumbnail' => 'required|file|image|mimes:jpg,jpeg,png,gif|max:5120',  // 5Mb
+        ]);
+
         $post_title = $request->input('title');
         $post_rtime = $request->input('rtime');
         $post_tag = $request->input('tag');
@@ -165,9 +214,14 @@ class PostController extends Controller
         $content = $request->input('content');
 
         $thumbnail_name = $post_thumbnail->getClientOriginalName();
-        $image_store_status = '';
+
         if($request->hasFile('thumbnail')){
             $image_store_status = $this->imageService->imageUpload($post_thumbnail, 'thumbnail/');
+            if(!$image_store_status["success"]){
+                return response()->json([
+                    "message" => $image_store_status["message"],
+                ],422);
+            }
         }
 
         $record = Post::create([
@@ -181,7 +235,7 @@ class PostController extends Controller
         ]);
 
         return response()->json([
-            'message' => $image_store_status
-        ]);
+            'message' => "New Post created",
+        ],200);
     }
 }
