@@ -36,7 +36,7 @@ Route::delete('/image-delete', [EditorController::class, 'imageDelete']);
 Route::controller(AuthController::class)->group(function(){
     Route::post('/register', 'register');
     Route::post('/login', 'login');
-    Route::get('/user', 'getUser')->middleware('auth:sanctum');
+    //  Route::get('/user', 'getUser')->middleware('auth:sanctum');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
